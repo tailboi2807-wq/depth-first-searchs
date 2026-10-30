@@ -73,7 +73,229 @@ F H <BR>
 ['A', 'B', 'E', 'D', 'C', 'G', 'F', 'H']
 
 <hr>
+~~~
 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graph DFS Visualization</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f4f8;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 500px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 8px;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 1px solid gray;
+            background: #fafafa;
+        }
+
+        #result {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Graph DFS Visualization</h2>
+
+    <label>Number of Nodes:</label><br>
+    <input type="number" id="nodes" min="1"><br>
+
+    <label>Number of Edges:</label><br>
+    <input type="number" id="edges" min="0"><br>
+
+    <label>Enter Edges (Example: A B):</label><br>
+    <textarea id="edgeList" rows="5"
+        placeholder="A B&#10;A C&#10;B D"></textarea><br>
+
+    <label>Starting Node:</label><br>
+    <input type="text" id="start" placeholder="Enter start node"><br>
+
+    <button onclick="runDFS()">Generate Graph & DFS</button>
+
+    <h3>Graph:</h3>
+    <canvas id="graphCanvas" width="450" height="300"></canvas>
+
+    <h3>DFS Result:</h3>
+    <p id="result"></p>
+</div>
+
+<script>
+function runDFS() {
+    const nodes = parseInt(document.getElementById("nodes").value);
+    const edges = parseInt(document.getElementById("edges").value);
+    const edgeInput = document.getElementById("edgeList").value.trim();
+    const start = document.getElementById("start").value.trim();
+
+    if (!Number.isInteger(nodes) || nodes < 1 ||
+        !Number.isInteger(edges) || edges < 0 ||
+        !start || (edges > 0 && !edgeInput)) {
+        alert("Please enter valid inputs!");
+        return;
+    }
+
+    const graph = {};
+    const allNodes = new Set();
+
+    if (edges > 0) {
+        const lines = edgeInput.split("\n")
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+        if (lines.length !== edges) {
+            alert("Number of edges does not match!");
+            return;
+        }
+
+        for (let line of lines) {
+            const parts = line.split(/\s+/);
+
+            if (parts.length !== 2) {
+                alert("Enter each edge as: A B");
+                return;
+            }
+
+            const [u, v] = parts;
+
+            allNodes.add(u);
+            allNodes.add(v);
+
+            if (!graph[u]) graph[u] = [];
+            if (!graph[v]) graph[v] = [];
+
+            graph[u].push(v);
+            graph[v].push(u);
+        }
+    }
+
+    if (allNodes.size > nodes) {
+        alert("Number of unique nodes exceeds the given count!");
+        return;
+    }
+
+    if (!allNodes.has(start)) {
+        document.getElementById("result").innerText =
+            "Starting node not found!";
+        drawGraph(graph);
+        return;
+    }
+
+    // Depth First Search
+    const visited = new Set();
+    const path = [];
+
+    function dfs(node) {
+        visited.add(node);
+        path.push(node);
+
+        for (let neighbour of graph[node]) {
+            if (!visited.has(neighbour)) {
+                dfs(neighbour);
+            }
+        }
+    }
+
+    dfs(start);
+
+    document.getElementById("result").innerText =
+        "DFS Traversal: " + path.join(" → ");
+
+    document.getElementById("graphCanvas").style.display = "block";
+    drawGraph(graph);
+}
+
+function drawGraph(graph) {
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const nodes = Object.keys(graph);
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 110;
+    const positions = {};
+
+    nodes.forEach((node, i) => {
+        const angle = (2 * Math.PI * i) / nodes.length;
+        positions[node] = {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle)
+        };
+    });
+
+    // Draw edges
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+
+    const drawn = new Set();
+
+    nodes.forEach(node => {
+        graph[node].forEach(neighbour => {
+            const key = [node, neighbour].sort().join("-");
+            if (drawn.has(key)) return;
+            drawn.add(key);
+
+            ctx.beginPath();
+            ctx.moveTo(positions[node].x, positions[node].y);
+            ctx.lineTo(positions[neighbour].x, positions[neighbour].y);
+            ctx.stroke();
+        });
+    });
+
+    // Draw nodes
+    nodes.forEach(node => {
+        const { x, y } = positions[node];
+
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "lightblue";
+        ctx.fill();
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(node, x, y);
+    });
+}
+</script>
+
+</body>
+</html>
+~~~
+~~~
 <hr>
 <h3>Sample Input</h3>
 <hr>
@@ -93,3 +315,5 @@ F H <BR>
 <hr>
 <p>Thus,a Graph was constructed and implementation of Depth First Search for the same graph was done successfully.</p>
 
+##output
+<img width="862" height="900" alt="image" src="https://github.com/user-attachments/assets/90d5af32-4947-4f9a-81cf-b09d960b06df" />
