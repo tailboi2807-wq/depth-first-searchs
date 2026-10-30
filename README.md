@@ -75,7 +75,7 @@ F H <BR>
 <hr>
 ~~~
 
-
+~~~
 <!DOCTYPE html>
 <html>
 <head>
@@ -122,7 +122,8 @@ F H <BR>
         }
     </style>
 </head>
-
+~~~
+~~~
 <body>
 
 <div class="container">
@@ -149,7 +150,8 @@ F H <BR>
     <h3>DFS Result:</h3>
     <p id="result"></p>
 </div>
-
+~~~
+~~~
 <script>
 function runDFS() {
     const nodes = parseInt(document.getElementById("nodes").value);
@@ -253,8 +255,8 @@ function drawGraph(graph) {
             y: centerY + radius * Math.sin(angle)
         };
     });
+~~~
 
-    // Draw edges
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
 
@@ -272,7 +274,8 @@ function drawGraph(graph) {
             ctx.stroke();
         });
     });
-
+~~~
+~~~
     // Draw nodes
     nodes.forEach(node => {
         const { x, y } = positions[node];
@@ -290,12 +293,16 @@ function drawGraph(graph) {
         ctx.fillText(node, x, y);
     });
 }
+~~~
 </script>
 
 </body>
 </html>
+
 ~~~
 ~~~
+
+
 <hr>
 <h3>Sample Input</h3>
 <hr>
@@ -315,5 +322,6 @@ function drawGraph(graph) {
 <hr>
 <p>Thus,a Graph was constructed and implementation of Depth First Search for the same graph was done successfully.</p>
 
-##output
+##output:
+
 <img width="862" height="900" alt="image" src="https://github.com/user-attachments/assets/90d5af32-4947-4f9a-81cf-b09d960b06df" />
